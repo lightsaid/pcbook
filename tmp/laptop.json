@@ -1,27 +1,27 @@
 {
- "id": "15851f45-868d-4f1d-98c5-48d0e4a90c44",
- "brand": "Dell",
- "name": "Latitude",
+ "id": "53d0b048-f4e9-4cb7-9ed1-bd667524fa9d",
+ "brand": "Lenovo",
+ "name": "Thinkpad X1",
  "cpu": {
   "brand": "Intel",
-  "name": "Core i5-9400F",
-  "number_cores": 7,
-  "number_threads": 12,
-  "min_ghz": 2.9140230818230224,
-  "max_ghz": 3.6066284280646284
+  "name": "Xeon E-2286M",
+  "number_cores": 4,
+  "number_threads": 8,
+  "min_ghz": 2.350368733379871,
+  "max_ghz": 4.585962798460885
  },
  "ram": {
-  "value": "18",
+  "value": "31",
   "unit": "GIGABYTE"
  },
  "gpus": [
   {
    "brand": "AMD",
-   "name": "RX Vega-56",
-   "min_ghz": 1.041821769804818,
-   "max_ghz": 1.233881013731542,
+   "name": "RX 580",
+   "min_ghz": 1.1169042605674173,
+   "max_ghz": 1.9331484547069353,
    "memory": {
-    "value": "3",
+    "value": "6",
     "unit": "GIGABYTE"
    }
   }
@@ -30,33 +30,33 @@
   {
    "driver": "SSD",
    "memory": {
-    "value": "547",
+    "value": "654",
     "unit": "GIGABYTE"
    }
   },
   {
    "driver": "HDD",
    "memory": {
-    "value": "5",
+    "value": "1",
     "unit": "TERABYTE"
    }
   }
  ],
  "screen": {
-  "size_inch": 14.111573,
+  "size_inch": 15.170922,
   "resolution": {
-   "width": 2718,
-   "height": 1529
+   "width": 4565,
+   "height": 2568
   },
-  "panel": "OLED",
-  "multitouch": true
+  "panel": "IPS",
+  "multitouch": false
  },
  "keyboard": {
-  "layout": "QWERTY",
-  "backlit": true
+  "layout": "QWERTZ",
+  "backlit": false
  },
- "weight_kg": 1.355978692544312,
- "price_usd": 2453.493962491618,
+ "weight_kg": 2.431713946824888,
+ "price_usd": 2144.7441393021445,
  "release_year": 2019,
- "updated_at": "2023-08-21T06:26:59.822572081Z"
+ "updated_at": "2023-08-21T11:00:45.567073859Z"
 }

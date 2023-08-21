@@ -12,7 +12,7 @@ import "storage_message.proto";
 // NOTE: 使用 google 预订义类型
 import "google/protobuf/timestamp.proto";
 
-message laptop {
+message Laptop {
     // id 唯一标识
     string id = 1;
 

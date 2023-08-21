@@ -1,0 +1,24 @@
+syntax="proto3";
+
+// 指定包位置和包名
+option go_package=".;pb";
+
+import "laptop_message.proto";
+
+message CreateLaptopRequest {
+    Laptop laptop = 1;
+}
+
+
+message CreateLaptopResponse {
+    string id = 1;
+}
+
+
+// 定义gRPC服务接口
+service LaptopService {
+    // unary gRPC
+    rpc CreateLaptop(CreateLaptopRequest) returns (CreateLaptopResponse) {};
+
+
+}
