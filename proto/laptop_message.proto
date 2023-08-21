@@ -1,0 +1,57 @@
+syntax="proto3";
+
+// 指定包位置和包名
+option go_package=".;pb";
+
+
+import "keyboard_message.proto";
+import "memory_message.proto";
+import "processor_message.proto";
+import "screen_message.proto";
+import "storage_message.proto";
+// NOTE: 使用 google 预订义类型
+import "google/protobuf/timestamp.proto";
+
+message laptop {
+    // id 唯一标识
+    string id = 1;
+
+    // 品牌
+    string brand = 2;
+
+    // 名称
+    string name = 3;
+
+    // 处理器
+    CPU cpu = 4;
+
+    // 内存
+    Memory ram = 5;
+
+    // GPU 显卡，列表
+    repeated GPU gpus = 6;
+    
+    // 硬盘
+    repeated Storage storages = 7;
+
+    // 显示器
+    Screen screen = 8;
+
+    // 键盘
+    Keyboard keyboard = 9;
+
+    // 重量，使用其中之一，千克/英镑
+    oneof weight {
+        double weight_kg = 10;
+        double weight_lb = 11;
+    }
+
+    // 价格，美元
+    double price_usd = 12;
+
+    // 发布年份
+    uint32 release_year = 13;
+
+    // 更新日期
+    google.protobuf.Timestamp updated_at = 14;
+}

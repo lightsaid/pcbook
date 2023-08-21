@@ -1,0 +1,19 @@
+syntax="proto3";
+
+// 指定包位置和包名
+option go_package = ".;pb";
+
+import "memory_message.proto";
+
+// 存储硬盘
+message Storage {
+    // 硬盘类型，机械硬盘和固态硬盘
+    enum Driver {
+        UNKNOWN = 0;
+        HDD = 1;
+        SSD = 2;
+    }
+
+    Driver driver = 1;
+    Memory memory = 2;
+}

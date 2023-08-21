@@ -1,0 +1,62 @@
+{
+ "id": "15851f45-868d-4f1d-98c5-48d0e4a90c44",
+ "brand": "Dell",
+ "name": "Latitude",
+ "cpu": {
+  "brand": "Intel",
+  "name": "Core i5-9400F",
+  "number_cores": 7,
+  "number_threads": 12,
+  "min_ghz": 2.9140230818230224,
+  "max_ghz": 3.6066284280646284
+ },
+ "ram": {
+  "value": "18",
+  "unit": "GIGABYTE"
+ },
+ "gpus": [
+  {
+   "brand": "AMD",
+   "name": "RX Vega-56",
+   "min_ghz": 1.041821769804818,
+   "max_ghz": 1.233881013731542,
+   "memory": {
+    "value": "3",
+    "unit": "GIGABYTE"
+   }
+  }
+ ],
+ "storages": [
+  {
+   "driver": "SSD",
+   "memory": {
+    "value": "547",
+    "unit": "GIGABYTE"
+   }
+  },
+  {
+   "driver": "HDD",
+   "memory": {
+    "value": "5",
+    "unit": "TERABYTE"
+   }
+  }
+ ],
+ "screen": {
+  "size_inch": 14.111573,
+  "resolution": {
+   "width": 2718,
+   "height": 1529
+  },
+  "panel": "OLED",
+  "multitouch": true
+ },
+ "keyboard": {
+  "layout": "QWERTY",
+  "backlit": true
+ },
+ "weight_kg": 1.355978692544312,
+ "price_usd": 2453.493962491618,
+ "release_year": 2019,
+ "updated_at": "2023-08-21T06:26:59.822572081Z"
+}

@@ -1,0 +1,48 @@
+syntax="proto3";
+
+// 指定包位置和包名
+option go_package = ".;pb";
+
+// 导入内存message
+import "memory_message.proto";
+
+// 笔记本处理器定义
+message CPU {
+    // 品牌
+    string brand = 1;
+    
+    // 名称/型号
+    string name = 2;
+
+    // 核数
+    uint32 number_cores = 3;
+
+    // 线程
+    uint32 number_threads = 4;
+
+    // 最小频率
+    double min_ghz = 5;
+
+    // 最大频率
+    double max_ghz = 6;
+}
+
+// 笔记本显卡（图形处理单元）
+message GPU {
+    // 品牌
+    string brand = 1;
+
+    // 名称/型号
+    string name = 2;
+
+    // 最小频率
+    double min_ghz = 3;
+ 
+    // 最大频率
+    double max_ghz = 4;
+
+    // 显存大小
+    Memory memory = 5;
+}
+
+

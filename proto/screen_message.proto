@@ -1,0 +1,33 @@
+syntax="proto3";
+
+// 指定包位置和包名
+option go_package=".;pb";
+
+// 笔记本显示器
+message Screen {
+    // 分辨率，如：1920*1080
+    // NOTE: 这里使用了message嵌套
+    message Resolution {
+        uint32 width = 1;
+        uint32 height = 2;
+    }
+
+    // 面板类型，显示器的材质，ips/oled
+    enum Panel {
+        UNKNOWN = 0;
+        IPS = 1;
+        OLED = 2;
+    }
+
+    // 英寸大小
+    float size_inch = 1;
+
+    // 分辨率
+    Resolution resolution = 2;
+
+    // 材质
+    Panel panel = 3;
+
+    // 是否触控屏
+    bool multitouch = 4;
+}

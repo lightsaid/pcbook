@@ -1,0 +1,20 @@
+syntax="proto3";
+
+option go_package=".;pb";
+
+// 笔记本键盘
+message Keyboard {
+    // 键盘布局枚举
+    enum Layout {
+        UNKNOWN = 0;
+        QWERTY = 1;
+        QWERTZ = 2;
+        AZERTY = 3;
+    }
+
+    // 键盘布局
+    Layout layout = 1;
+
+    // 键盘是否背光
+    bool backlit = 2;
+}

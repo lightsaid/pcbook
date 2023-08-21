@@ -1,0 +1,23 @@
+syntax="proto3";
+
+// 指定包位置和包名
+option go_package = ".;pb";
+
+
+// 定义内存
+message Memory {
+    // 使用枚举定义内存单位
+    enum Unit {
+        UNKNOWN = 0;  // 未知类型
+        BIT = 1;      // bit
+        BYTE = 2;     // b
+        KILOBYTE = 3; // kb
+        MEGABYTE = 4; // MB
+        GIGABYTE = 5; // GB
+        TERABYTE = 6; // TB
+    }
+
+    // 内存由单位和值构成
+    uint64 value = 1; // 值
+    Unit unit = 2;    // 单位
+}
