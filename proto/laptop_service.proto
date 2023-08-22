@@ -4,21 +4,54 @@ syntax="proto3";
 option go_package=".;pb";
 
 import "laptop_message.proto";
+import "filter_message.proto";
+
 
 message CreateLaptopRequest {
     Laptop laptop = 1;
 }
 
-
 message CreateLaptopResponse {
     string id = 1;
 }
 
+message SearchLaptopRequest {
+    Filter filter = 1;
+}
+
+message SearchLaptopResponse {
+    Laptop laptop = 1;
+}
+
+message ImageInfo {
+    string laptop_id = 1;
+    string image_type = 2;
+}
+
+message UploadImageRequest {
+    // oneof protobuf 关键字，意思就是请求参数是info或者chunk_data之一
+    // 上传图片过程，采用的客户端流，因此客户端首先第一次先发送图片的信息ImageInfo，
+    // 再者源源不断地发送bytes字节流，直到图片发送完毕
+    oneof data {
+        ImageInfo info = 1;
+        bytes chunk_data = 2;
+    }
+}
+
+message UploadImageResponse {
+    string id = 1;
+    uint32 size = 2;
+}
 
 // 定义gRPC服务接口
 service LaptopService {
-    // unary gRPC
+    // unary gRPC (一元流gRPC)
     rpc CreateLaptop(CreateLaptopRequest) returns (CreateLaptopResponse) {};
 
+    // server-streaming gRPC (服务端流gRPC)
+    rpc SearchLaptop(SearchLaptopRequest) returns (stream SearchLaptopResponse) {};
+
+    // client-streaming gRPC (客户端流)
+    rpc UploadImage(stream UploadImageRequest) returns (UploadImageResponse) {};
 
 }

@@ -1,11 +1,12 @@
 package service
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"log"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/lightsaid/pcbook/pb"
@@ -13,17 +14,21 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+const maxImageSize = 1 << 20 // 1MB
+
 // LaptopServer 提供 laptop （笔记本电脑） 的服务
 type LaptopServer struct {
-	Store LaptopStore
+	laptopStore LaptopStore
+	imageStore  ImageStore
 
 	pb.UnimplementedLaptopServiceServer
 }
 
 // NewLaptopServer 创建返回一个 LaptopServer
-func NewLaptopServer(s LaptopStore) *LaptopServer {
+func NewLaptopServer(s LaptopStore, i ImageStore) *LaptopServer {
 	return &LaptopServer{
-		Store: s,
+		laptopStore: s,
+		imageStore:  i,
 	}
 }
 
@@ -49,7 +54,7 @@ func (server *LaptopServer) CreateLaptop(ctx context.Context, req *pb.CreateLapt
 
 	// NOTE: 在client端设置超时ctx为2秒，这里休眠3秒，client是报错了，但是这里（服务端）还是继续往下执行
 	// 这是不正确的，因此这里需要处理
-	time.Sleep(3 * time.Second)
+	// time.Sleep(3 * time.Second)
 
 	// NOTE: 在保存数据到store或数据库时，需要检查ctx.Err是否存在错误
 	if ctx.Err() != nil {
@@ -67,7 +72,7 @@ func (server *LaptopServer) CreateLaptop(ctx context.Context, req *pb.CreateLapt
 	}
 
 	// 保存到 store
-	err := server.Store.Save(laptop)
+	err := server.laptopStore.Save(laptop)
 	if err != nil {
 		code := codes.Internal
 		if errors.Is(err, ErrAlreadyExists) {
@@ -82,4 +87,126 @@ func (server *LaptopServer) CreateLaptop(ctx context.Context, req *pb.CreateLapt
 	res := &pb.CreateLaptopResponse{Id: laptop.Id}
 
 	return res, nil
+}
+
+// SearchLaptop 查找 laptop，  server-streaming gRPC (服务端流gRPC)
+func (server *LaptopServer) SearchLaptop(req *pb.SearchLaptopRequest, stream pb.LaptopService_SearchLaptopServer) error {
+	filter := req.GetFilter()
+	log.Printf("receive a search-laptop request with filter: %v\n", filter)
+
+	err := server.laptopStore.Search(
+		stream.Context(),
+		filter,
+		func(laptop *pb.Laptop) error {
+			res := &pb.SearchLaptopResponse{Laptop: laptop}
+			if err := stream.Send(res); err != nil {
+				return err
+			}
+			log.Printf("sent laptop with id: %s", laptop.GetId())
+
+			return nil
+		},
+	)
+	if err != nil {
+		return status.Errorf(codes.Internal, "unexpected error: %v", err)
+	}
+
+	return nil
+}
+
+// UploadImage 上传图片 client-streaming gRPC (客户端流)
+func (server *LaptopServer) UploadImage(stream pb.LaptopService_UploadImageServer) error {
+	// 首先接受图片信息
+	req, err := stream.Recv()
+	if err != nil {
+		return logError(status.Errorf(codes.Unknown, "cannot receive image info"))
+	}
+
+	laptopID := req.GetInfo().GetLaptopId()
+	imageType := req.GetInfo().GetImageType()
+	log.Printf("receive an upload-image request for laptop %s with image type %s", laptopID, imageType)
+
+	// 查询是否存在laptop
+	laptop, err := server.laptopStore.Find(laptopID)
+	if err != nil {
+		return logError(status.Errorf(codes.NotFound, "cannot find laptop: %v", err))
+	}
+
+	if laptop == nil {
+		return logError(status.Errorf(codes.InvalidArgument, "laptop id %s doesn't exist", laptopID))
+	}
+
+	imageData := bytes.Buffer{}
+	imageSize := 0
+
+	for {
+		err := contextError(stream.Context())
+		if err != nil {
+			return err
+		}
+
+		// log.Print("waiting to receive more data")
+
+		req, err = stream.Recv()
+		if err == io.EOF {
+			log.Println("no more data")
+			break
+		}
+		if err != nil {
+			return logError(status.Errorf(codes.Unknown, "cannot receive chunk data: %v", err))
+		}
+
+		chunk := req.GetChunkData()
+		size := len(chunk)
+
+		// log.Printf("received a chunk with size: %d", size)
+
+		imageSize += size
+
+		if imageSize > maxImageSize {
+			return status.Errorf(codes.InvalidArgument, "to long")
+		}
+
+		_, err = imageData.Write(chunk)
+		if err != nil {
+			return logError(status.Errorf(codes.Internal, "cannot write chunk data: %v", err))
+		}
+	}
+
+	imageID, err := server.imageStore.Save(laptopID, imageType, imageData)
+	if err != nil {
+		return logError(status.Errorf(codes.Internal, "cannot save image to the store: %v", err))
+	}
+
+	res := &pb.UploadImageResponse{
+		Id:   imageID,
+		Size: uint32(imageSize),
+	}
+
+	err = stream.SendAndClose(res)
+	if err != nil {
+		return logError(status.Errorf(codes.Unknown, "cannot send response: %v", err))
+	}
+
+	log.Printf("saved image with id: %s, size: %d", imageID, imageSize)
+	return nil
+}
+
+func logError(err error) error {
+	if err != nil {
+		log.Println(err)
+	}
+
+	return err
+}
+
+func contextError(ctx context.Context) error {
+	switch ctx.Err() {
+	case context.Canceled:
+		return logError(status.Error(codes.Canceled, "request is canceled"))
+	case context.DeadlineExceeded:
+		return logError(status.Error(codes.DeadlineExceeded, "deadline is exceeded"))
+	default:
+		return nil
+	}
 }
