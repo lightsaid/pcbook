@@ -43,6 +43,17 @@ message UploadImageResponse {
     uint32 size = 2;
 }
 
+message RateLaptopRequest {
+    string laptop_id = 1;
+    double score = 2;
+}
+  
+message RateLaptopResponse {
+    string laptop_id = 1;
+    uint32 rated_count = 2;
+    double average_score = 3;
+}
+
 // 定义gRPC服务接口
 service LaptopService {
     // unary gRPC (一元流gRPC)
@@ -53,5 +64,8 @@ service LaptopService {
 
     // client-streaming gRPC (客户端流)
     rpc UploadImage(stream UploadImageRequest) returns (UploadImageResponse) {};
+
+    // bidirectional-streaming gRPC (双向流)
+    rpc RateLaptop(stream RateLaptopRequest) returns (stream RateLaptopResponse) {};
 
 }

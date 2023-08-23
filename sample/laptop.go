@@ -1,8 +1,8 @@
 package sample
 
 import (
-	"github.com/golang/protobuf/ptypes"
 	"github.com/lightsaid/pcbook/pb"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 // 样板，随机生成数据， seed 种子
@@ -143,8 +143,12 @@ func NewLaptop() *pb.Laptop {
 		},
 		PriceUsd:    randomFloat64(1500, 3500),
 		ReleaseYear: uint32(randomInt(2015, 2019)),
-		UpdatedAt:   ptypes.TimestampNow(),
+		UpdatedAt:   timestamppb.Now(),
 	}
 
 	return laptop
+}
+
+func RandomLaptopScore() float64 {
+	return float64(randomInt(1, 10))
 }
