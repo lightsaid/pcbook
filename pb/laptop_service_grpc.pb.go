@@ -4,6 +4,8 @@
 // - protoc             v3.12.4
 // source: laptop_service.proto
 
+// 定义proto的包名，包名可以避免对message 类型之间的名字冲突（proto层面）
+
 package pb
 
 import (
@@ -19,10 +21,10 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	LaptopService_CreateLaptop_FullMethodName = "/LaptopService/CreateLaptop"
-	LaptopService_SearchLaptop_FullMethodName = "/LaptopService/SearchLaptop"
-	LaptopService_UploadImage_FullMethodName  = "/LaptopService/UploadImage"
-	LaptopService_RateLaptop_FullMethodName   = "/LaptopService/RateLaptop"
+	LaptopService_CreateLaptop_FullMethodName = "/lightsaid.pcbook.LaptopService/CreateLaptop"
+	LaptopService_SearchLaptop_FullMethodName = "/lightsaid.pcbook.LaptopService/SearchLaptop"
+	LaptopService_UploadImage_FullMethodName  = "/lightsaid.pcbook.LaptopService/UploadImage"
+	LaptopService_RateLaptop_FullMethodName   = "/lightsaid.pcbook.LaptopService/RateLaptop"
 )
 
 // LaptopServiceClient is the client API for LaptopService service.
@@ -292,7 +294,7 @@ func (x *laptopServiceRateLaptopServer) Recv() (*RateLaptopRequest, error) {
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var LaptopService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "LaptopService",
+	ServiceName: "lightsaid.pcbook.LaptopService",
 	HandlerType: (*LaptopServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

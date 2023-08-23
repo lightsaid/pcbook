@@ -132,7 +132,6 @@ $ go get -u google.golang.org/grpc
 $ go get -u google.golang.org/grpc/cmd/protoc-gen-go-grpc
 ```
 
-
 ---
 
 ``如何定义 protobuf？``
@@ -151,4 +150,66 @@ $ go get -u google.golang.org/grpc/cmd/protoc-gen-go-grpc
     - int32，int64，uint32，uint64，sint32，sint64 ...
     - 自定义类型，例如枚举或其他消息
 
-- 尽量给每一个字段写注释
+- 尽量给每一个字段写注释。
+
+- 解析 package 和 option go_package 作用
+```proto
+// 定义proto的包名，包名可以避免对message 类型之间的名字冲突，同名的Message可以通过package进行区分。
+// 在没有为特定语言定义option xxx_package的时候，它还可以用来生成特定语言的包名，比如Java package, go package。
+package lightsaid.pcbook;
+
+// 指定包位置和包名
+option go_package=".;pb";
+```
+
+
+### gRPC reflection and Evans CLI （gRPC 反射）
+
+前置： proto 文件必须指定 package name
+
+第一步：在server层使注册反射即可
+```go
+	
+import "google.golang.org/grpc/reflection"
+
+func main(){
+	// 注册gRPC反射服务
+	reflection.Register(grpcServer)
+}
+```
+
+第二步： 安装 Evans CLI gRPC 客户端
+
+去到 github 代码仓库的release下载，解压后，将可执行文件移动到： `sudo mv evans /usr/local/bin/`
+
+[下载](https://github.com/ktr0731/evans/releases)
+
+Evans 有两种命令模式（REPL、CLI），参考文档即可，这里简单列举几个：
+```bash
+# 连接到 gRPC 服务
+evans -r repl -p 8080
+
+## 连接成功，即可执行下面命令
+
+# 查看包
+show package
+
+# 使用 package，输入 package 后选择包
+package package lightsaid.pcbook
+
+# 选择包后，即可查看 message、调用gRPC服务等。。。
+show message
+
+# 获取message格式，desc 后选择
+desc UploadImageRequest
+
+# 选一个服务，后续即可调用该服务的RPC（方法），service 后选择服务名
+service LaptopService
+
+# 使用 call 调用具体服务，以CreateLaptop服务为例，当遇到重复参数输入时按 Ctrl + D，退出重复参数，即可选择其他参数
+call CreateLaptop
+
+
+# 退出
+exit
+```

@@ -1,7 +1,10 @@
 syntax="proto3";
 
-// 指定包位置和包名
-option go_package = ".;pb";
+// 定义proto的包名，包名可以避免对message 类型之间的名字冲突（proto层面）
+package lightsaid.pcbook;
+
+// 指定包位置和包名（代码层面）
+option go_package=".;pb";
 
 
 // 定义内存
