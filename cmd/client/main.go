@@ -140,7 +140,7 @@ func main() {
 	laptopClient := pb.NewLaptopServiceClient(conn)
 
 	// 测试创建 laptop
-	// testCreateLaptop(laptopClient)
+	testCreateLaptop(laptopClient)
 
 	// // 测试查找 Laptop
 	// testSearchLaptop(laptopClient)
@@ -149,7 +149,7 @@ func main() {
 	// testUploadImage(laptopClient)
 
 	// 测试评分
-	testRateLaptop(laptopClient)
+	// testRateLaptop(laptopClient)
 }
 
 func testCreateLaptop(laptopClient pb.LaptopServiceClient) {

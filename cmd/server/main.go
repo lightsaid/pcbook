@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"log"
@@ -11,6 +12,24 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
+
+func unaryInterceptor(
+	ctx context.Context,
+	req interface{},
+	info *grpc.UnaryServerInfo,
+	handler grpc.UnaryHandler) (resp interface{}, err error) {
+	log.Println("--> unary interceptor: ", info.FullMethod)
+	return handler(ctx, req)
+}
+
+func streamServerInterceptor(
+	srv interface{},
+	ss grpc.ServerStream,
+	info *grpc.StreamServerInfo,
+	handler grpc.StreamHandler) error {
+	log.Println("--> stream interceptor: ", info.FullMethod)
+	return handler(srv, ss)
+}
 
 func main() {
 	port := flag.Int("port", 0, "the server port")
@@ -23,7 +42,11 @@ func main() {
 	ratingStore := service.NewInMemoryRatingStore()
 
 	laptopServer := service.NewLaptopServer(laptopStore, imageStore, ratingStore)
-	grpcServer := grpc.NewServer()
+	grpcServer := grpc.NewServer(
+		grpc.UnaryInterceptor(unaryInterceptor),
+		grpc.StreamInterceptor(streamServerInterceptor),
+	)
+
 	pb.RegisterLaptopServiceServer(grpcServer, laptopServer)
 
 	// 注册gRPC反射服务

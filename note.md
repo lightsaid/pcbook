@@ -213,3 +213,31 @@ call CreateLaptop
 # 退出
 exit
 ```
+
+
+### gRPC 拦截器
+
+*gRPC拦截器就像一个中间件的功能，可以在客户端和服务端添加；它可以用于多种用途，例如：记录日志，跟踪、速率限制、身份认证和授权。*
+
+*gRPC拦截器有两种：一种用于一元RPC，另一种用于流RPC*
+
+*如何使用？*
+
+- 服务端
+
+```go
+grpcServer := grpc.NewServer(
+    grpc.UnaryInterceptor(...),
+	grpc.StreamInterceptor(...)
+)
+```
+
+- 客户端
+```go
+	client, err := grpc.Dial(
+		*serverAddress,
+		transportOption,
+		grpc.WithUnaryInterceptor(...),
+		grpc.WithStreamInterceptor(...),
+	)
+```
